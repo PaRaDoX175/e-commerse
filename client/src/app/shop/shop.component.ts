@@ -72,7 +72,6 @@ export class ShopComponent implements OnInit {
   onSortSelected(event: any) {
     this.shopParams.sort = event.target.value;
     this.getProducts();
-    console.log(event.target);
   }
 
   onPageChanged(event: any) {
