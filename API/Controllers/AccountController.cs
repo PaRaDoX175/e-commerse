@@ -35,7 +35,7 @@ namespace API.Controllers
             {
                 Email = user.Email,
                 Token = _tokenService.CreateToken(user),
-                DisplayName = user.UserName,
+                DisplayName = user.DisplayName,
             };
         }
 
@@ -51,7 +51,7 @@ namespace API.Controllers
             {
                 Email = user.Email,
                 Token = _tokenService.CreateToken(user),
-                DisplayName = user.UserName,
+                DisplayName = user.DisplayName,
             };
         }
 
@@ -95,7 +95,7 @@ namespace API.Controllers
             {
                 DisplayName = registerDto.DisplayName,
                 Email = registerDto.Email,
-                UserName = registerDto.Email,
+                UserName = registerDto.DisplayName,
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
