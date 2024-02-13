@@ -12,7 +12,6 @@ import { Order } from "src/app/shared/models/order";
 export class OrderDetailsComponent implements OnInit {
   orderLength = 0;
   order?: Order;
-  previousUrl?: string;
 
   constructor(
     public orderService: OrderFeaturesService,
@@ -23,27 +22,47 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getOrder();
+    if (this.orderService.isCurrent) {
+      this.getCurrentOrder();
+    } else {
+      this.getOrder();
+    }
+  }
+
+  getCurrentOrder() {
+    if (this.orderService.isCurrent) {
+      this.orderLength = this.orderService.orders.length;
+      if (this.orderLength !== 0) {
+        this.dataService.saveValue(this.orderLength);
+      }
+
+      const sessionLength = this.dataService.getLastValue();
+
+      this.orderService
+        .getOrderById(this.orderLength == 0 ? sessionLength : this.orderLength)
+        .subscribe({
+          next: order => {
+            this.bcService.set(
+              "@orderDetails",
+              `Order #${
+                this.orderLength == 0 ? sessionLength : this.orderLength
+              }`
+            );
+            this.order = order;
+          }
+        });
+
+      this.orderService.isCurrent = false;
+    }
   }
 
   getOrder() {
-    this.orderLength = this.orderService.orders.length;
-    if (this.orderLength !== 0) {
-      this.dataService.saveValue(this.orderLength);
-    }
-
-    const sessionLength = this.dataService.getLastValue();
-
-    this.orderService
-      .getOrderById(this.orderLength == 0 ? sessionLength : this.orderLength)
-      .subscribe({
-        next: order => {
-          this.bcService.set(
-            "@orderDetails",
-            `Order #${this.orderLength == 0 ? sessionLength : this.orderLength}`
-          );
-          this.order = order;
-        }
-      });
+    const id = this.dataService.getLastValue();
+    this.orderService.getOrderById(id).subscribe({
+      next: order => {
+        this.bcService.set("@orderDetails", `Order #${order.id}`);
+        this.order = order;
+      }
+    });
   }
 }
