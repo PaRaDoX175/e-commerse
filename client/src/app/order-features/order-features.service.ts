@@ -9,6 +9,7 @@ import { Order } from "../shared/models/order";
 export class OrderFeaturesService {
   baseUrl = environment.apiUrl;
   orders: Order[] = [];
+  isCurrent = false;
 
   constructor(private http: HttpClient) {}
 
